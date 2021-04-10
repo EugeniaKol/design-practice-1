@@ -54,29 +54,35 @@ func (tb *testedBinaryModule) DynamicDependencies(blueprint.DynamicDependerModul
 	return tb.properties.Deps
 }
 
+func (tb *testedBinaryModule) GetBinPath(bd string) string {
+	return path.Join(bd, "bin", tb.Name())
+}
+
 func (tb *testedBinaryModule) GenerateBuildActions(ctx blueprint.ModuleContext) {
 	name := ctx.ModuleName()
 	config := bood.ExtractConfig(ctx)
 	config.Debug.Printf("Adding build actions and testing for go binary module '%s'", name)
 
-	binOutputPath := path.Join(config.BaseOutputDir, "bin", name)
+	baseDir := config.BaseOutputDir
+	binOutputPath := tb.GetBinPath(baseDir)
 
 	var inputs []string
-	inputErors := false
+	inputErrors := false
 	for _, src := range tb.properties.Srcs {
 		//avoiding building if only tests are changed
 		if matches, err := ctx.GlobWithDeps(src, append(tb.properties.SrcsExclude, tb.properties.TestSrcs...)); err == nil {
 			inputs = append(inputs, matches...)
 		} else {
 			ctx.PropertyErrorf("srcs", "Cannot resolve files that match pattern %s", src)
-			inputErors = true
+			inputErrors = true
 		}
 	}
-	if inputErors {
+	if inputErrors {
 		return
 	}
 
-	testOutputPath := path.Join(config.BaseOutputDir, "test", name)
+	testOutputPath := path.Join(baseDir, "test", name)
+
 	//getting sources for testing
 	var testInputs []string
 
@@ -85,11 +91,11 @@ func (tb *testedBinaryModule) GenerateBuildActions(ctx blueprint.ModuleContext) 
 			testInputs = append(testInputs, matches...)
 		} else {
 			ctx.PropertyErrorf("testSrcs", "Cannot resolve files that match pattern %s", src)
-			inputErors = true
+			inputErrors = true
 		}
 	}
 
-	if inputErors {
+	if inputErrors {
 		return
 	}
 	//if build files are changed, tests are run too
