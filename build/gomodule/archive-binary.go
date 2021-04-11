@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	goArchive = pctx.StaticRule("ziparchive", blueprint.RuleParams{
+	goArchive = pctx.StaticRule("goArchive", blueprint.RuleParams{
 		Command:     "cd $workDir && zip -r -j $outputPath $input",
 		Description: "archive results of $binary",
 	}, "workDir", "outputPath", "input", "binary")
@@ -22,6 +22,10 @@ type archiveModule struct {
 	}
 }
 
+func (am *archiveModule) DynamicDependencies(blueprint.DynamicDependerModuleContext) []string {
+	return []string{am.properties.Binary}
+}
+
 func (am *archiveModule) GenerateBuildActions(ctx blueprint.ModuleContext) {
 	name := ctx.ModuleName()
 	config := bood.ExtractConfig(ctx)
@@ -31,7 +35,11 @@ func (am *archiveModule) GenerateBuildActions(ctx blueprint.ModuleContext) {
 	baseDir := config.BaseOutputDir
 
 	//getting results of other module using its name
-	binModule, _ := ctx.GetDirectDep(binName)
+	binModule, tag := ctx.GetDirectDep(binName)
+	if binModule == nil {
+		println("###########cant find ", binName, "  ", tag)
+	}
+
 	inputs := binModule.(*testedBinaryModule).GetBinPath(baseDir)
 
 	zipOutputPath := path.Join(baseDir, "archive", name)
