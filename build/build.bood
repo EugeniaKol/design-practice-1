@@ -1,10 +1,18 @@
-go_binary {
+tested_binary {
+  //set go_binary to tested_binary, add archive_bin
   // Module (and output) name.
   name: "bood",
 
   // Go package to build.
-  pkg: "github.com/roman-mazur/design-practice-1-template/build/cmd/bood",
-
+  pkg: "github.com/EugeniaKol/design-practice-1/build/cmd/bood",
+  // Go packages to test
+  testPkg: "./...",
   // Build inputs.
-  srcs: ["**/*.go", "../go.mod"]
+  srcs: ["**/*.go", "../go.mod"],
+  testSrcs: ["**/*_test.go"]
+}
+
+archive_bin {
+    name: "zip_archive",
+    binary: "bood"
 }
