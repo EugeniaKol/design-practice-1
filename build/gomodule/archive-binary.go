@@ -35,9 +35,9 @@ func (am *archiveModule) GenerateBuildActions(ctx blueprint.ModuleContext) {
 	baseDir := config.BaseOutputDir
 
 	//getting results of other module using its name
-	binModule, tag := ctx.GetDirectDep(binName)
+	binModule, _ := ctx.GetDirectDep(binName)
 	if binModule == nil {
-		println("###########cant find ", binName, "  ", tag)
+		println("cant find ", binName, " dependency")
 	}
 
 	inputs := binModule.(*testedBinaryModule).GetBinPath(baseDir)
