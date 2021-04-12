@@ -10,3 +10,6 @@ before_install:
 
 script:
 - go build ./build/cmd/bood
+- sudo mv bood /usr/local/bin
+- cd build
+- bood
