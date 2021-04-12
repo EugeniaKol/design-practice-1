@@ -13,3 +13,5 @@ script:
 - sudo mv bood /usr/local/bin
 - cd build
 - bood
+- cd ../example
+- bood
