@@ -7,3 +7,6 @@ before_install:
 - wget https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-linux.zip
 - sudo unzip ninja-linux.zip
 - sudo mv ninja /usr/local/bin
+
+script:
+- go build ./build/cmd/bood
