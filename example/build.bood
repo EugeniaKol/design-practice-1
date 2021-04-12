@@ -1,0 +1,18 @@
+tested_binary {
+  //set go_binary to tested_binary, add archive_bin
+  // Module (and output) name.
+  name: "lab_info",
+
+  // Go package to build.
+  pkg: "github.com/EugeniaKol/design-practice-1/example/lab_info",
+ // Go package to test.
+  testPkg: "github.com/EugeniaKol/design-practice-1/example/lab_info",
+  // Build inputs.
+  srcs: ["**/*.go", "../go.mod"],
+  testSrcs: ["**/*_test.go"]
+}
+
+archive_bin {
+    name: "info_zip_archive",
+    binary: "lab_info"
+}
